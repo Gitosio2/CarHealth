@@ -8,7 +8,7 @@ targets at the time of writing; they are updated as the project moves.
 | Concern | Choice | Version | Reference |
 |---|---|---|---|
 | Language | TypeScript | 5.x | [ADR 0001](decisions/0001-typescript-over-java.md) |
-| Runtime | Node | 22 LTS | [ADR 0001](decisions/0001-typescript-over-java.md) |
+| Runtime | Node | 24 LTS | [ADR 0001](decisions/0001-typescript-over-java.md) |
 | Framework | NestJS | 11.x | [ADR 0004](decisions/0004-nestjs-as-backend-framework.md) |
 | Architecture | Modular monolith, hexagonal | — | [ADR 0002](decisions/0002-modular-monolith.md), [ADR 0003](decisions/0003-hexagonal-architecture.md) |
 | Database | PostgreSQL | 16+ | [ADR 0009](decisions/0009-drizzle-and-postgresql.md) |
@@ -43,8 +43,8 @@ neither defines an API shape independently. See
 
 | Concern | Choice | Reference |
 |---|---|---|
-| Package manager | pnpm | [ADR 0005](decisions/0005-pnpm-turborepo-monorepo.md) |
-| Workspace orchestration | Turborepo | [ADR 0005](decisions/0005-pnpm-turborepo-monorepo.md) |
+| Package manager | pnpm 11 | [ADR 0005](decisions/0005-pnpm-turborepo-monorepo.md) |
+| Workspace orchestration | Turborepo 2 | [ADR 0005](decisions/0005-pnpm-turborepo-monorepo.md) |
 
 ## Testing
 
@@ -55,7 +55,7 @@ Strict TDD applies: tests are written before the implementation they describe.
 | Backend unit | Vitest |
 | Backend integration | Testcontainers (PostgreSQL) + NestJS testing module |
 | Backend API | Supertest |
-| Architecture | `dependency-cruiser` — see [ADR 0011](decisions/0011-automated-architecture-enforcement.md) |
+| Architecture | `dependency-cruiser` 17 — see [ADR 0011](decisions/0011-automated-architecture-enforcement.md) |
 | Frontend unit | Vitest + Testing Library |
 | Frontend API mocking | MSW, typed from `packages/contracts` |
 | End-to-end | Playwright |

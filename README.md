@@ -6,8 +6,31 @@ maintenance is never a guess.
 
 ## Status
 
-**Pre-implementation.** The architecture and technology stack have been decided and
-documented. No application code exists yet.
+**Scaffolded, pre-implementation.** The architecture and technology stack are decided and
+documented, and the workspace and its architecture boundaries are in place. No
+application code exists yet.
+
+## Getting started
+
+Requires Node 24 (see `.nvmrc`) and pnpm.
+
+```bash
+pnpm install
+```
+
+| Command | What it does |
+|---|---|
+| `pnpm arch` | Checks architecture boundaries. Fails on violation |
+| `pnpm arch:graph` | Emits the dependency graph in Graphviz DOT format |
+| `pnpm typecheck` | Type-checks every workspace package |
+
+`pnpm arch` runs first in CI, before type checking. A boundary violation is a design
+defect, and it is cheaper to learn that before waiting on everything else.
+
+**When adding or changing a rule in `.dependency-cruiser.cjs`, verify it by writing a
+file that violates it on purpose and confirming `pnpm arch` reports it.** A rule never
+observed failing is not known to work — see
+[ADR 0011](docs/architecture/decisions/0011-automated-architecture-enforcement.md).
 
 ## Documentation
 

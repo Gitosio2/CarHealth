@@ -1,0 +1,15 @@
+{
+  "name": "@carhealth/web",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@carhealth/contracts": "workspace:*"
+  },
+  "devDependencies": {
+    "@carhealth/tsconfig": "workspace:*"
+  }
+}

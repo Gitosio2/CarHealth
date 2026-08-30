@@ -25,20 +25,81 @@ That pressure has to be replaced deliberately. This ADR is the replacement.
 
 ## Decision
 
-**`dependency-cruiser` runs in CI with layer and module rules that fail the build on
-violation.** Rules to encode:
+**`dependency-cruiser` runs in CI with rules that fail the build on violation.**
+
+Implemented in [`.dependency-cruiser.cjs`](../../../.dependency-cruiser.cjs). Every rule
+has `severity: 'error'` — a warning is a violation that gets merged anyway.
+
+### Layer rules, within `apps/api`
 
 | Rule | Rationale |
 |---|---|
-| `domain/` must not import `application/` or `infrastructure/` | Dependencies point inward |
-| `application/` must not import `infrastructure/` | Ports, not implementations |
-| `domain/` must not import `@nestjs/*`, Drizzle, Zod, or any framework | The domain is framework-free |
-| No module may import another module's `domain/` or `infrastructure/` | Contexts talk through published ports |
-| No circular dependencies anywhere | — |
+| `domain-is-self-contained` — a module's `domain/` may import only from its own `domain/` | Business rules depend on nothing: no other layer, no other module, no npm or workspace package, no Node builtin |
+| `application-must-not-depend-on-infrastructure` | `application/` declares ports; `infrastructure/` implements them |
+| `no-cross-module-internals` — no module may import another module's `domain/` or `infrastructure/` | Contexts talk through published ports or domain events |
+| `no-circular` | A cycle is a boundary that was never really there |
+| `no-orphans` | Dead code left by a refactor. Entry points and config files are exempt, because being unimported is their normal state |
 
-**These rules are written before the first feature**, not after. Rules added to an
-existing codebase begin life with a list of exceptions, and an exception list is how
-enforcement becomes decoration.
+#### Why `domain-is-self-contained` is an allowlist
+
+The first implementation was a denylist: forbid `domain/` from importing NestJS,
+Drizzle, Zod, and the npm dependency types. **Verification proved it did not work.** A
+deliberate violation importing an npm package from `domain/` passed cleanly, because
+dependency-cruiser classified it as `npm-no-pkg` — resolved, but declared in the root
+`package.json` rather than the app's — and that type was not in the list.
+
+The rule was inverted to state what `domain/` *may* import, which is its own `domain/`
+and nothing else. An allowlist cannot have that gap, there is no list of forbidden
+things to keep current, and it replaced three separate rules with one.
+
+The lesson generalises, and is the reason the verification step below is mandatory: a
+rule that has never been observed failing is not known to work.
+
+### Package rules, across the monorepo
+
+| Rule | Rationale |
+|---|---|
+| `packages/contracts` must not import from any `apps/*` | It is the shared foundation both apps depend on; importing upward inverts the dependency |
+| `apps/api` must not import from `apps/web`, and the reverse | The applications share code only through `packages/*` |
+
+The package rules address a failure mode the layer rules cannot see. If
+`packages/contracts` ever imports from `apps/api`, the frontend begins pulling backend
+code through its own dependency graph and the shared package stops being shared. Nobody
+writes that import deliberately; editor auto-import writes it, and without a rule nothing
+objects.
+
+### Expressing the rules
+
+Module boundaries are written once using dependency-cruiser's capture-group
+backreferences (`$1`), not once per module. A single rule of the form *"a module's
+`domain/` may not be imported from a different module"* covers all four contexts and
+every context added later. Per-module rules would need maintaining as modules appear,
+and a rule that must be remembered is a rule that will be forgotten.
+
+### Ordering
+
+**These rules are written before the first feature**, not after. In practice this means
+the rules land in the same commit as the repository scaffold — the directory structure
+has to exist for the rules to match against — so that no application file is ever added
+while the boundaries are unwatched.
+
+Rules retrofitted onto an existing codebase begin life with a list of exceptions, and an
+exception list is how enforcement becomes decoration.
+
+### Verification — mandatory when rules change
+
+**A rule that has never been observed failing is not known to work.** A configuration
+that reports no violations is indistinguishable from one that checks nothing, and the
+`npm-no-pkg` gap above was invisible until a violation was written deliberately.
+
+Whenever a rule is added or modified:
+
+1. Write a file that violates it on purpose.
+2. Run `pnpm arch` and confirm the violation is reported, by rule name.
+3. Delete the file and confirm the run is clean again.
+
+This is not optional diligence. It is the only evidence that the enforcement described in
+this ADR exists.
 
 ## Consequences
 

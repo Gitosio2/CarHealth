@@ -1,0 +1,6 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "//": "Workspace-wide view used by dependency-cruiser and by editors. Each package has its own tsconfig.json for building.",
+  "extends": "./packages/tsconfig/base.json",
+  "include": ["apps/*/src/**/*", "packages/*/src/**/*"]
+}
