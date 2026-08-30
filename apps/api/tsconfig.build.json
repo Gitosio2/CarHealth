@@ -1,0 +1,8 @@
+{
+  "//": "Build view: production sources only. tsconfig.json also covers tests so they type-check.",
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "rootDir": "src"
+  },
+  "exclude": ["node_modules", "dist", "test", "**/*.spec.ts"]
+}

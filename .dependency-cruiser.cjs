@@ -28,7 +28,17 @@ module.exports = {
         'port in application/ - and this rule is what surfaces that need ' +
         'instead of letting it leak inward.',
       severity: 'error',
-      from: { path: '^apps/api/src/modules/([^/]+)/domain/' },
+      from: {
+        path: '^apps/api/src/modules/([^/]+)/domain/',
+        // Test files are excluded from the *from* side: they must import a
+        // test runner, and that says nothing about whether the domain itself
+        // is coupled. The rule constrains the domain's dependencies, and a
+        // test is not the domain.
+        // What the tool cannot check, and a reviewer must: a domain test that
+        // needs more than the runner and the subject under test is an
+        // integration test in the wrong directory.
+        pathNot: '[.](?:spec|test)[.]tsx?$',
+      },
       to: { pathNot: '^apps/api/src/modules/$1/domain/' },
     },
 
@@ -104,7 +114,12 @@ module.exports = {
           '(^|/)[.][^/]+[.](?:js|cjs|mjs|ts|cts|mts|json)$',
           '[.]d[.]ts$',
           '(^|/)tsconfig[.]json$',
-          '(^|/)(?:babel|webpack|vite|turbo)[.]config[.](?:js|cjs|mjs|ts)$',
+          // Any *.config.* file: vite, vitest, turbo, drizzle, and whatever
+          // the stack picks up later. Broader than a denylist of known names,
+          // which would silently miss the next tool added.
+          '(^|/)[^/]*[.]config[.](?:js|cjs|mjs|ts|mts|cts)$',
+          // Test files are invoked by the runner, not imported by a sibling.
+          '[.](?:spec|test|e2e-spec)[.]tsx?$',
           // Package entry barrels, declared in package.json "exports".
           '^packages/[^/]+/src/index[.]ts$',
           // Application entry points, invoked by the runtime.

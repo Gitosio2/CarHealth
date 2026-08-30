@@ -1,0 +1,10 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "//": "For packages that emit CommonJS: apps/api and packages/contracts, because NestJS and its ecosystem assume CJS. verbatimModuleSyntax is disabled here because it forbids ESM import/export syntax in a CommonJS emit target; it stays enabled in base.json for the ESM packages, where it is useful.",
+  "extends": "./base.json",
+  "compilerOptions": {
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "verbatimModuleSyntax": false
+  }
+}

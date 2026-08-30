@@ -27,9 +27,12 @@ jobs:
 
       # Runs before anything else on purpose. A boundary violation is a
       # design defect, and it is cheaper to learn that before waiting on
-      # type checking, tests and builds.
+      # type checking, builds and tests.
       - name: Architecture boundaries
         run: pnpm arch
 
       - name: Type check
         run: pnpm typecheck
+
+      - name: Test
+        run: pnpm test

@@ -1,8 +1,9 @@
 {
-  "extends": "@carhealth/tsconfig/base.json",
+  "extends": "@carhealth/tsconfig/node-cjs.json",
   "compilerOptions": {
     "rootDir": "src",
     "outDir": "dist"
   },
-  "include": ["src/**/*"]
+  "include": ["src/**/*"],
+  "exclude": ["**/*.spec.ts"]
 }

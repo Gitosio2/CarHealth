@@ -23,6 +23,13 @@ pnpm install
 | `pnpm arch` | Checks architecture boundaries. Fails on violation |
 | `pnpm arch:graph` | Emits the dependency graph in Graphviz DOT format |
 | `pnpm typecheck` | Type-checks every workspace package |
+| `pnpm test` | Runs the test suites |
+| `pnpm build` | Builds every workspace package |
+| `pnpm --filter @carhealth/api dev` | Runs the API in watch mode |
+
+The API reads `PORT` and `NODE_ENV`, both optional. They are validated at boot, and an
+invalid value stops the process with a message naming every offending variable rather
+than surfacing as `undefined` inside a request later.
 
 `pnpm arch` runs first in CI, before type checking. A boundary violation is a design
 defect, and it is cheaper to learn that before waiting on everything else.

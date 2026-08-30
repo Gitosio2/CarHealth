@@ -87,6 +87,29 @@ Direct database access across module boundaries is prohibited. A module reading 
 module's tables produces a coupling that no interface documents and no refactoring
 survives.
 
+## Outside the contexts
+
+Not everything in `apps/api/src/` is a bounded context. Three things sit alongside
+`modules/` and are deliberately exempt from the rules above:
+
+| Path | What it is |
+|---|---|
+| `main.ts` | Process entry point. Validates the environment, then boots Nest |
+| `app.module.ts` | **Composition root.** The only place allowed to know about every context |
+| `config/` | Environment contract, validated once at boot |
+| `health/` | Liveness endpoint. Belongs to no context because it describes the process, not the business |
+
+The composition root is what makes the boundaries possible rather than contradicting
+them. Contexts do not import each other; something has to assemble them, and that
+something is `app.module.ts`. Concentrating that knowledge in one file is the point — it
+is why every other file can stay ignorant of the whole.
+
+`health/` is a liveness check only: it answers whether the process is serving requests,
+and deliberately does not check the database or the auth provider. A liveness probe that
+fails during a dependency outage makes the platform restart a process that is working,
+turning a partial outage into a total one. Readiness checks, if they are ever needed,
+belong on a separate route.
+
 ## Where does new code go?
 
 Follow the chain in order.

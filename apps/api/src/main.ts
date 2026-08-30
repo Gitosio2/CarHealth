@@ -1,11 +1,15 @@
-/**
- * API entry point.
- *
- * Placeholder. The NestJS bootstrap lands with the first module; this file
- * exists so the workspace type-checks and CI is meaningful from the first
- * commit.
- *
- * See docs/architecture/module-boundaries.md before adding code here.
- */
+import { NestFactory } from '@nestjs/core';
 
-export {};
+import { AppModule } from './app.module';
+import { parseEnv } from './config/env';
+
+async function bootstrap(): Promise<void> {
+  // Before anything else: a misconfigured environment should stop the process
+  // here, not surface as an undefined value inside a request later.
+  const env = parseEnv(process.env);
+
+  const app = await NestFactory.create(AppModule);
+  await app.listen(env.PORT);
+}
+
+void bootstrap();

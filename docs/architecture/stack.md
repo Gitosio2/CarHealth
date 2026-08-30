@@ -9,7 +9,7 @@ targets at the time of writing; they are updated as the project moves.
 |---|---|---|---|
 | Language | TypeScript | 5.x | [ADR 0001](decisions/0001-typescript-over-java.md) |
 | Runtime | Node | 24 LTS | [ADR 0001](decisions/0001-typescript-over-java.md) |
-| Framework | NestJS | 11.x | [ADR 0004](decisions/0004-nestjs-as-backend-framework.md) |
+| Framework | NestJS | 12.x | [ADR 0004](decisions/0004-nestjs-as-backend-framework.md) |
 | Architecture | Modular monolith, hexagonal | — | [ADR 0002](decisions/0002-modular-monolith.md), [ADR 0003](decisions/0003-hexagonal-architecture.md) |
 | Database | PostgreSQL | 16+ | [ADR 0009](decisions/0009-drizzle-and-postgresql.md) |
 | ORM | Drizzle ORM | latest | [ADR 0009](decisions/0009-drizzle-and-postgresql.md) |

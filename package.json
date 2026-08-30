@@ -8,7 +8,9 @@
   "scripts": {
     "arch": "depcruise apps packages --config .dependency-cruiser.cjs",
     "arch:graph": "depcruise apps packages --config .dependency-cruiser.cjs --output-type dot",
-    "typecheck": "turbo run typecheck"
+    "typecheck": "turbo run typecheck",
+    "test": "turbo run test",
+    "build": "turbo run build"
   },
   "devDependencies": {
     "dependency-cruiser": "^17.0.0",
