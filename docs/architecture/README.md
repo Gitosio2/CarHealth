@@ -58,6 +58,7 @@ carhealth/
 - [stack.md](stack.md) — the technology reference, with versions
 - [module-boundaries.md](module-boundaries.md) — bounded contexts, layer rules, and
   where new code belongs
+- [domain-model.md](../domain-model.md) — what the application stores and why
 
 ## Decision records
 
@@ -94,7 +95,6 @@ Deliberately undecided. Listed here so they stay visible.
 
 | Question | Why it is deferred |
 |---|---|
-| Data model | Needs the domain explored before entities are fixed |
 | Visual design, component library | No UI work has started |
 | Concrete auth provider | Interacts with the hosting choice — see ADR 0007 and 0012 |
 | Concrete hosting provider | Free-tier terms need re-verification at deploy time |

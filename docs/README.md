@@ -8,9 +8,10 @@ costs, and mileage — so that upcoming or overdue work is visible rather than r
 
 ## Scope of this documentation
 
-This directory currently holds architecture and technology decisions only. It is written
-to answer one question for anyone joining the project: *why is it built this way?*
+This directory holds architecture, technology and domain decisions. It is written to
+answer one question for anyone joining the project: *why is it built this way?*
 
+- [domain-model.md](domain-model.md) — what the application stores and why
 - [architecture/README.md](architecture/README.md) — system overview and ADR index
 - [architecture/stack.md](architecture/stack.md) — technology reference
 - [architecture/module-boundaries.md](architecture/module-boundaries.md) — bounded
@@ -19,9 +20,8 @@ to answer one question for anyone joining the project: *why is it built this way
 ## Not documented yet
 
 These are open by design, not by oversight. They are listed in the architecture README
-so they cannot be quietly forgotten:
+and at the end of the domain model, so they cannot be quietly forgotten:
 
-- The data model
 - Visual design and UI conventions
 - The concrete authentication and hosting providers
 - Notification delivery
