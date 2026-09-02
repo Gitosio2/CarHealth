@@ -37,15 +37,23 @@ Everything a user owns hangs off `Profile`.
 | `make` | |
 | `model` | |
 | `plate` | Unique **per profile**, not globally |
-| `vin` | Optional |
+| `vin` | Optional. Unique **per profile** when present |
 | `createdAt` | |
 
-**`plate` is unique per profile, not globally.** Global uniqueness would let the first
-person to register a plate block it permanently, and cars get sold. Two profiles holding
-the same plate is normal — a car changed hands, or a couple both track the family car.
+**`plate` and `vin` are unique per profile, not globally.** Global uniqueness would let
+the first person to register a vehicle block it permanently, and cars get sold. Two
+profiles holding the same plate is normal — a car changed hands, or a couple both track
+the family car.
+
+**Accepted consequence:** because the constraint is per profile, the same physical
+vehicle *can* exist in two profiles at once. Enforcing one-vehicle-one-profile would
+require global uniqueness, which leaves the buyer of a used car unable to register it
+until the previous owner deletes their record and loses their history. That trade was
+considered and the per-profile constraint was chosen deliberately.
 
 **`vin` is optional.** Plenty of owners do not have it to hand, and requiring it would
-block registration for no gain.
+block registration for no gain. Its uniqueness constraint therefore only applies when a
+value is present.
 
 #### Filling make and model automatically
 
@@ -144,9 +152,15 @@ person can see which reference they fitted last time.
 | Field | Notes |
 |---|---|
 | `id` | |
+| `profileId` | **Null for the shared catalog**; set for a task the user added |
 | `name` | Oil change, air filter, spark plugs, timing belt… |
 | `intervalKm` | Default, optional |
 | `intervalMonths` | Default, optional |
+
+The catalog ships seeded with the common tasks. `profileId` is what lets a user add their
+own without a second concept: `null` means a shared entry everybody sees, a value means a
+task private to that profile. Same table, same behaviour, and user-created tasks carry
+their own intervals like any other.
 
 **This is the load-bearing decision of the whole model.** If the task were free text,
 the same job becomes "cambio de aceite", "cambio aceite" and "Cambio de Aceite" — three
@@ -232,10 +246,21 @@ fine. A wrong reminder is worse than no reminder, because it is trusted.
 
 ---
 
+### Delivery
+
+Reminders surface as a **list on the web home page**. That is the first version, and it
+needs nothing beyond the derivation described above.
+
+Push notifications on mobile come later. They are deliberately not part of the first
+version: iOS only delivers web push to a PWA installed to the home screen, with
+constraints that need verifying before anything is designed around them
+([ADR 0006](architecture/decisions/0006-pwa-first-mobile-strategy.md)).
+
+---
+
 ## Open questions
 
 | Question | Why it is still open |
 |---|---|
-| How reminders are delivered — push, email, or an in-app list only | iOS PWA web push has real constraints that need verifying first ([ADR 0006](architecture/decisions/0006-pwa-first-mobile-strategy.md)) |
-| Who seeds the `TaskType` catalog, and whether users can extend it | Depends on how many task types the first version actually needs |
-| Whether a vehicle can belong to more than one profile | Not needed for the first version; the model does not preclude it |
+| Push notification delivery on mobile | iOS PWA web push constraints need verifying first |
+| Archiving a vehicle that has been sold | Not required by the uniqueness rules above, but a sold car should stop generating reminders |
