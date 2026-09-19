@@ -2,6 +2,21 @@ packages:
   - 'apps/*'
   - 'packages/*'
 
+# Every dependency that ships an install script has to be answered explicitly.
+# `true` means the script runs; `false` means it is skipped knowingly, which is
+# the point — an unanswered entry is a native binary nobody decided about.
+allowBuilds:
+  # drizzle-kit runs on esbuild, which downloads its platform binary here.
+  esbuild: true
+  # Optional native speed-up for ssh2, used by the Docker client Testcontainers
+  # talks to. Skipped: it needs a C++ toolchain and ssh2 works without it.
+  cpu-features: false
+  # Testcontainers' Docker client. Its build script only compiles the optional
+  # native crypto; the pure-JS path is the one we use.
+  ssh2: false
+  # Generates a CLI shim we never invoke.
+  protobufjs: false
+
 # Native bindings that must be compiled on install.
 onlyBuiltDependencies:
   - '@swc/core'

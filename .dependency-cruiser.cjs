@@ -66,6 +66,35 @@ module.exports = {
       },
     },
 
+    // ---- Physical schema, apps/api/src/database -------------------------
+
+    {
+      name: 'schema-is-infrastructure-only',
+      comment:
+        'The Drizzle schema is persistence. A use case importing a table ' +
+        'means the port it was supposed to depend on does not exist, and a ' +
+        'domain entity importing one means the business rules now know what ' +
+        'a column is.\n' +
+        'The schema lives outside modules/ because the physical database is ' +
+        'one artefact and foreign keys cross contexts (ADR 0013). That ' +
+        'exemption is about where tables are declared, not about who may ' +
+        'read them - this rule is the other half of it.',
+      severity: 'error',
+      from: { path: '^apps/api/src/modules/[^/]+/(domain|application)/' },
+      to: { path: '^apps/api/src/database/' },
+    },
+
+    {
+      name: 'schema-must-not-depend-on-modules',
+      comment:
+        'The schema describes tables and nothing else. Importing a module ' +
+        'from it would invert the dependency: persistence would start ' +
+        'reaching up into the code that is supposed to own it.',
+      severity: 'error',
+      from: { path: '^apps/api/src/database/' },
+      to: { path: '^apps/api/src/modules/' },
+    },
+
     // ---- Package rules, across the monorepo -----------------------------
 
     {
@@ -119,7 +148,7 @@ module.exports = {
           // which would silently miss the next tool added.
           '(^|/)[^/]*[.]config[.](?:js|cjs|mjs|ts|mts|cts)$',
           // Test files are invoked by the runner, not imported by a sibling.
-          '[.](?:spec|test|e2e-spec)[.]tsx?$',
+          '[.](?:spec|test|e2e-spec|int-spec)[.]tsx?$',
           // Package entry barrels, declared in package.json "exports".
           '^packages/[^/]+/src/index[.]ts$',
           // Application entry points, invoked by the runtime.
