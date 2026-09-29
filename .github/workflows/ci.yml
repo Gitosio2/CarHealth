@@ -36,3 +36,9 @@ jobs:
 
       - name: Test
         run: pnpm test
+
+      # Real PostgreSQL through Testcontainers (ADR 0009). Docker is
+      # preinstalled on the GitHub-hosted runner, so this needs no service
+      # container: the tests start and migrate their own database.
+      - name: Integration test
+        run: pnpm test:int

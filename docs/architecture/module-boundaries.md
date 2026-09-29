@@ -11,8 +11,9 @@ enforceable, it does not belong in this document.
 
 ## Bounded contexts
 
-Four contexts, one directory each under `apps/api/src/modules/`. The data model is not
-yet defined; what follows describes **responsibility**, not entities.
+Four contexts, one directory each under `apps/api/src/modules/`. What follows describes
+**responsibility**; the entities each context owns are in the
+[domain model](../domain-model.md).
 
 | Module | Owns | Does not own |
 |---|---|---|
@@ -89,8 +90,8 @@ survives.
 
 ## Outside the contexts
 
-Not everything in `apps/api/src/` is a bounded context. Three things sit alongside
-`modules/` and are deliberately exempt from the rules above:
+Not everything in `apps/api/src/` is a bounded context. These sit alongside `modules/`
+and are deliberately exempt from the rules above:
 
 | Path | What it is |
 |---|---|
@@ -98,11 +99,38 @@ Not everything in `apps/api/src/` is a bounded context. Three things sit alongsi
 | `app.module.ts` | **Composition root.** The only place allowed to know about every context |
 | `config/` | Environment contract, validated once at boot |
 | `health/` | Liveness endpoint. Belongs to no context because it describes the process, not the business |
+| `database/` | The physical schema and its migrations. One file per context, but one database |
 
 The composition root is what makes the boundaries possible rather than contradicting
 them. Contexts do not import each other; something has to assemble them, and that
 something is `app.module.ts`. Concentrating that knowledge in one file is the point — it
 is why every other file can stay ignorant of the whole.
+
+### `database/` — one database, four contexts
+
+The Drizzle schema lives in `apps/api/src/database/schema/`, one file per bounded
+context, and its foreign keys cross contexts freely — including
+`vehicles.profile_id → profiles.id` and `maintenances.vehicle_id → vehicles.id`.
+
+That is not a hole in the rules above; it is the same reasoning as the composition root.
+There is one PostgreSQL database, and its constraints belong to the database rather than
+to any module. Declaring a table inside a context would make every cross-context foreign
+key an illegal import, and the practical result would be no foreign keys at all — the
+guarantee traded away for a directory layout. See
+[ADR 0013](decisions/0013-centralised-physical-schema.md).
+
+What the boundary still forbids, enforced by `dependency-cruiser`:
+
+| Rule | What it stops |
+|---|---|
+| `schema-is-infrastructure-only` | `domain/` or `application/` importing a table. Only `infrastructure/` may |
+| `schema-must-not-depend-on-modules` | The schema reaching up into the code that owns it |
+
+A repository imports **the schema file of its own context**, not the barrel in
+`schema/index.ts` — that barrel exists for drizzle-kit and the test harness, which
+legitimately need the whole database. Reaching into another context's tables remains
+prohibited; it is now a visible import for review to catch rather than something the
+tool can decide, and that is the price of having referential integrity at all.
 
 `health/` is a liveness check only: it answers whether the process is serving requests,
 and deliberately does not check the database or the auth provider. A liveness probe that

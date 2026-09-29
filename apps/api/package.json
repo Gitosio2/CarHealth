@@ -8,13 +8,18 @@
     "dev": "nest start --watch",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "test:int": "vitest run --config vitest.integration.config.mts",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate"
   },
   "dependencies": {
     "@carhealth/contracts": "workspace:*",
     "@nestjs/common": "^12.0.1",
     "@nestjs/core": "^12.0.1",
     "@nestjs/platform-express": "^12.0.1",
+    "drizzle-orm": "^0.45.2",
+    "pg": "^8.23.0",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.2",
     "zod": "^4.5.2"
@@ -24,8 +29,11 @@
     "@nestjs/cli": "^12.0.0",
     "@nestjs/testing": "^12.0.1",
     "@swc/core": "^1.16.1",
+    "@testcontainers/postgresql": "^12.1.0",
     "@types/node": "^26.4.0",
+    "@types/pg": "^8.23.1",
     "@types/supertest": "^7.2.1",
+    "drizzle-kit": "^0.31.10",
     "supertest": "^7.2.2",
     "unplugin-swc": "^1.5.11",
     "vitest": "^4.1.11"

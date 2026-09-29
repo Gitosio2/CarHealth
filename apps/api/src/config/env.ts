@@ -13,6 +13,14 @@ const envSchema = z.object({
     .default('development'),
   // process.env values are always strings; coerce before validating.
   PORT: z.coerce.number().int().positive().default(3000),
+  // No default. A connection string that silently falls back to localhost is
+  // how a deployment ends up writing to the wrong database without saying so.
+  DATABASE_URL: z
+    .string()
+    .refine(
+      (value) => /^postgres(ql)?:\/\//.test(value),
+      'must be a postgres:// or postgresql:// connection string',
+    ),
 });
 
 export type Env = z.infer<typeof envSchema>;

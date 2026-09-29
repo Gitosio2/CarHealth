@@ -78,6 +78,7 @@ Read in order; each states what was rejected and why.
 | [0010](decisions/0010-react-spa-over-nextjs.md) | React SPA over Next.js |
 | [0011](decisions/0011-automated-architecture-enforcement.md) | Automated architecture enforcement |
 | [0012](decisions/0012-free-tier-infrastructure.md) | Free-tier infrastructure |
+| [0013](decisions/0013-centralised-physical-schema.md) | The physical schema is a single artefact |
 
 ### How ADRs work here
 
